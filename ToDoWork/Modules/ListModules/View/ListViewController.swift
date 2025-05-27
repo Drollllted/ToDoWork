@@ -10,6 +10,12 @@ import UIKit
 class ListViewController: UIViewController {
     
     weak var listCoordinatesDelegate: ListCoordinator?
+    private var listView: ListView!
+    
+    override func loadView() {
+        listView = ListView()
+        view = listView
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
