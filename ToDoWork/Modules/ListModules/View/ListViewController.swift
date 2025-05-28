@@ -21,14 +21,41 @@ class ListViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .black
         setupNavBar()
+        delegateTableView()
     }
     
     private func setupNavBar() {
         navigationController?.navigationBar.prefersLargeTitles = true
         title = "ToDoList"
         navigationController?.navigationBar.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
+        
+    }
+    
+    private func delegateTableView() {
+        listView.tableNoteView.delegate = self
+        listView.tableNoteView.dataSource = self
     }
 
 
+}
+
+extension ListViewController: UITableViewDelegate, UITableViewDataSource{
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 5
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: ListCell.id, for: indexPath) as? ListCell else {fatalError("Hi hi hi")}
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 100
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
 }
 
