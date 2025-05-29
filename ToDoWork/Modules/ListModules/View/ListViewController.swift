@@ -50,7 +50,7 @@ extension ListViewController: UITableViewDelegate, UITableViewDataSource{
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 100
+        return 106
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
