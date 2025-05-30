@@ -7,10 +7,12 @@
 
 import UIKit
 
-class ListViewController: UIViewController {
+final class ListViewController: UIViewController {
     
     weak var listCoordinatesDelegate: ListCoordinator?
     private var listView: ListView!
+    
+    private let apiCaller = APIManager.shared
     
     override func loadView() {
         listView = ListView()
@@ -22,6 +24,7 @@ class ListViewController: UIViewController {
         view.backgroundColor = .black
         setupNavBar()
         delegateTableView()
+        apiCaller.setupJSON()
     }
     
     private func setupNavBar() {
