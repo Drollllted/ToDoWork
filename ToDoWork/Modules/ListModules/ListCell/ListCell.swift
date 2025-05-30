@@ -89,6 +89,11 @@ final class ListCell: UITableViewCell {
         self.layer.borderColor = UIColor.blue.cgColor
     }
     
+    func configure(with todo: Todo) {
+        nameNoteLabel.text = todo.todo
+        secondaryNoteLabel.text = "Hi - hi"
+    }
+    
 }
 extension ListCell {
     
@@ -100,13 +105,13 @@ extension ListCell {
     func constraintsUI() {
         NSLayoutConstraint.activate([
             completeButton.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 15),
-            completeButton.topAnchor.constraint(equalTo: self.topAnchor, constant: 5),
+            completeButton.topAnchor.constraint(equalTo: self.topAnchor, constant: 15),
             completeButton.heightAnchor.constraint(equalToConstant: 30),
             completeButton.widthAnchor.constraint(equalToConstant: 30),
             
             stackNote.leadingAnchor.constraint(equalTo: completeButton.trailingAnchor, constant: 15),
-            stackNote.topAnchor.constraint(equalTo: self.topAnchor, constant: 5),
-            stackNote.trailingAnchor.constraint(equalTo: self.trailingAnchor),
+            stackNote.topAnchor.constraint(equalTo: self.topAnchor, constant: 2),
+            stackNote.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -15),
             stackNote.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -5)
         ])
     }

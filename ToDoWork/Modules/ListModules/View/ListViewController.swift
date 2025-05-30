@@ -11,8 +11,7 @@ final class ListViewController: UIViewController {
     
     weak var listCoordinatesDelegate: ListCoordinator?
     private var listView: ListView!
-    
-    private let apiCaller = APIManager.shared
+    private let viewModel = ListViewModel()
     
     override func loadView() {
         listView = ListView()
@@ -24,7 +23,12 @@ final class ListViewController: UIViewController {
         view.backgroundColor = .black
         setupNavBar()
         delegateTableView()
-        apiCaller.setupJSON()
+        viewModel.fetchTodos()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setupBinding()
     }
     
     private func setupNavBar() {
@@ -38,17 +42,35 @@ final class ListViewController: UIViewController {
         listView.tableNoteView.delegate = self
         listView.tableNoteView.dataSource = self
     }
+    
+    private func setupBinding() {
+        viewModel.onTodosUpdates = { [weak self] in
+            DispatchQueue.main.async {
+                self?.listView.tableNoteView.reloadData()
+            }
+        }
+        
+        viewModel.errors = {[weak self] errorMessage in
+            let alert = UIAlertController(title: "Warning", message: errorMessage, preferredStyle: .alert)
+            let alertAction = UIAlertAction(title: "Ok", style: .cancel)
+            self?.present(alert, animated: true)
+        }
+    }
 
 
 }
 
 extension ListViewController: UITableViewDelegate, UITableViewDataSource{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 5
+        return viewModel.countOfTodos()
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: ListCell.id, for: indexPath) as? ListCell else {fatalError("Hi hi hi")}
+        
+        let todo = viewModel.todo(at: indexPath.row)
+        cell.configure(with: todo)
+        
         return cell
     }
     
