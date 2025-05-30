@@ -36,6 +36,9 @@ final class ListViewController: UIViewController {
         title = "ToDoList"
         navigationController?.navigationBar.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
         
+        let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(createNotes))
+        navigationItem.rightBarButtonItem = addButton
+        
     }
     
     private func delegateTableView() {
@@ -55,6 +58,46 @@ final class ListViewController: UIViewController {
             let alertAction = UIAlertAction(title: "Ok", style: .cancel)
             self?.present(alert, animated: true)
         }
+    }
+    
+    @objc private func createNotes() {
+        let alertController = UIAlertController(title: "Create new note", message: "What's title?", preferredStyle: .alert)
+        alertController.addTextField { tf in
+            tf.placeholder = "Title"
+        }
+        
+        alertController.addTextField { tf in
+            tf.placeholder = "Note"
+        }
+        
+        alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        alertController.addAction(UIAlertAction(title: "Save", style: .default) { [weak self] _ in
+            guard let title = alertController.textFields?.first?.text,
+                  let description = alertController.textFields?.last?.text else { return }
+            
+            let context = CoreDataManager.shared.persistentContainer.viewContext
+            let newNote = Note(context: context)
+            newNote.id = UUID()
+            newNote.titleNotes = title
+            newNote.textNotes = description
+            newNote.dateNotes = Date()
+            newNote.completed = false
+            
+            do {
+                try CoreDataManager.shared.addOrUpdateNote(note: newNote)
+                self?.viewModel.fetchNotes()
+                self?.viewModel.fetchTodos()
+                DispatchQueue.main.async { [weak self] in
+                    self?.listView.tableNoteView.reloadData()
+                }
+            } catch {
+                self?.viewModel.errors?(error.localizedDescription)
+            }
+        })
+        
+        present(alertController, animated: true)
+        
+        
     }
 
 
