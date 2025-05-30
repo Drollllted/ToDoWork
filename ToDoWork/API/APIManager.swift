@@ -11,6 +11,8 @@ final class APIManager {
     
     static let shared = APIManager()
     
+    private init() {}
+    
     func setupJSON(completion: @escaping (Result<WelcomeJSON, APIErrors>) -> Void) {
         let url = "https://dummyjson.com/todos"
         guard let urlString = URL(string: url) else {
