@@ -44,7 +44,7 @@ final class ListViewController: UIViewController {
     }
     
     private func setupBinding() {
-        viewModel.onTodosUpdates = { [weak self] in
+        viewModel.onDataUpdates = { [weak self] in
             DispatchQueue.main.async {
                 self?.listView.tableNoteView.reloadData()
             }
@@ -62,18 +62,21 @@ final class ListViewController: UIViewController {
 
 extension ListViewController: UITableViewDelegate, UITableViewDataSource{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel.countOfTodos()
+        return viewModel.addAllItems()
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: ListCell.id, for: indexPath) as? ListCell else {fatalError("Hi hi hi")}
         
-        let todo = viewModel.todo(at: indexPath.row)
-        cell.configure(with: todo)
+        let item = viewModel.item(at: indexPath.row)
         
+        if let todo = item as? Todo {
+            cell.configureTodos(with: todo)
+        } else if let note = item as? Note {
+            cell.configureNotes(with: note)
+        }
         return cell
     }
-    
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 106
     }

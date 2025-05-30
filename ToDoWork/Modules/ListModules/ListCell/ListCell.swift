@@ -89,9 +89,18 @@ final class ListCell: UITableViewCell {
         self.layer.borderColor = UIColor.blue.cgColor
     }
     
-    func configure(with todo: Todo) {
+    //MARK: - Configure
+    
+    func configureTodos(with todo: Todo) {
         nameNoteLabel.text = todo.todo
-        secondaryNoteLabel.text = "Hi - hi"
+        secondaryNoteLabel.text = "From API"
+        
+    }
+    
+    func configureNotes(with noted: Note) {
+        nameNoteLabel.text = noted.titleNotes
+        secondaryNoteLabel.text = noted.textNotes
+        dateCreateNoteLabel.text = DateFormatterHelper.shared.formattedDate(from: noted.dateNotes ?? Date())
     }
     
 }

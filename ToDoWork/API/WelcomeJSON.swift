@@ -16,6 +16,6 @@ struct WelcomeJSON: Codable {
 struct Todo: Codable {
     let id: Int
     let todo: String
-    let completed: Bool
+    var completed: Bool
     let userId: Int
 }
