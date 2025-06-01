@@ -132,9 +132,9 @@ extension ListViewController: UITableViewDelegate, UITableViewDataSource{
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-//        viewModel.toggleCompleted(at: indexPath.row)
-//        tableView.reloadRows(at: [indexPath], with: .automatic)
-        listCoordinatesDelegate?.goToNoteVC()
+        viewModel.toggleCompleted(at: indexPath.row)
+        tableView.reloadRows(at: [indexPath], with: .automatic)
+//        listCoordinatesDelegate?.goToNoteVC()
     }
     
 }

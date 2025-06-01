@@ -132,13 +132,17 @@ final class ListCell: UITableViewCell {
         secondaryNoteLabel.textColor = .lightGray
         dateCreateNoteLabel.textColor = .gray
         
+        nameNoteLabel.attributedText = nil
+        secondaryNoteLabel.attributedText = nil
+        dateCreateNoteLabel.attributedText = nil
+        
         completeButton.setImage(nil, for: .normal)
         completeButton.backgroundColor = .clear
     }
  
     //MARK: - Strike text
     
-    func strikeText(text: String) -> NSMutableAttributedString {
+    private func strikeText(text: String) -> NSMutableAttributedString {
         let attributedString = NSMutableAttributedString(string: text)
         attributedString.addAttribute(.strikethroughStyle,
                                     value: NSUnderlineStyle.single.rawValue,
@@ -150,6 +154,11 @@ final class ListCell: UITableViewCell {
                                     value: UIColor.gray,
                                     range: NSRange(location: 0, length: attributedString.length))
         return attributedString
+    }
+    
+    private func notStrikeText(text: String) -> NSMutableAttributedString {
+        
+        return NSMutableAttributedString()
     }
     
 }
