@@ -89,6 +89,69 @@ final class ListCell: UITableViewCell {
         self.layer.borderColor = UIColor.blue.cgColor
     }
     
+    //MARK: - Configure
+    
+    func configureTodos(with todo: Todo) {
+        nameNoteLabel.text = todo.todo
+        secondaryNoteLabel.text = "From API"
+        dateCreateNoteLabel.text = "20/05/2025"
+        
+        if todo.completed {
+            applyCompletedStyle()
+        } else {
+            applyDefaultStyle()
+        }
+    }
+
+    func configureNotes(with note: Note) {
+        nameNoteLabel.text = note.titleNotes ?? "No title"
+        secondaryNoteLabel.text = note.textNotes ?? "No description"
+        dateCreateNoteLabel.text = DateFormatterHelper.shared.formattedDate(from: note.dateNotes ?? Date())
+        
+        if note.completed {
+            applyCompletedStyle()
+        } else {
+            applyDefaultStyle()
+        }
+    }
+
+    private func applyCompletedStyle() {
+        nameNoteLabel.attributedText = strikeText(text: nameNoteLabel.text ?? "")
+        secondaryNoteLabel.attributedText = strikeText(text: secondaryNoteLabel.text ?? "")
+        dateCreateNoteLabel.attributedText = strikeText(text: dateCreateNoteLabel.text ?? "")
+        
+        completeButton.setImage(UIImage(systemName: "checkmark"), for: .normal)
+        completeButton.backgroundColor = .systemOrange
+        
+        secondaryNoteLabel.textColor = .darkGray
+        dateCreateNoteLabel.textColor = .systemOrange
+    }
+
+    private func applyDefaultStyle() {
+        nameNoteLabel.textColor = .white
+        secondaryNoteLabel.textColor = .lightGray
+        dateCreateNoteLabel.textColor = .gray
+        
+        completeButton.setImage(nil, for: .normal)
+        completeButton.backgroundColor = .clear
+    }
+ 
+    //MARK: - Strike text
+    
+    func strikeText(text: String) -> NSMutableAttributedString {
+        let attributedString = NSMutableAttributedString(string: text)
+        attributedString.addAttribute(.strikethroughStyle,
+                                    value: NSUnderlineStyle.single.rawValue,
+                                    range: NSRange(location: 0, length: attributedString.length))
+        attributedString.addAttribute(.strikethroughColor,
+                                    value: UIColor.gray,
+                                    range: NSRange(location: 0, length: attributedString.length))
+        attributedString.addAttribute(.foregroundColor,
+                                    value: UIColor.gray,
+                                    range: NSRange(location: 0, length: attributedString.length))
+        return attributedString
+    }
+    
 }
 extension ListCell {
     
@@ -100,13 +163,13 @@ extension ListCell {
     func constraintsUI() {
         NSLayoutConstraint.activate([
             completeButton.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 15),
-            completeButton.topAnchor.constraint(equalTo: self.topAnchor, constant: 5),
+            completeButton.topAnchor.constraint(equalTo: self.topAnchor, constant: 15),
             completeButton.heightAnchor.constraint(equalToConstant: 30),
             completeButton.widthAnchor.constraint(equalToConstant: 30),
             
             stackNote.leadingAnchor.constraint(equalTo: completeButton.trailingAnchor, constant: 15),
-            stackNote.topAnchor.constraint(equalTo: self.topAnchor, constant: 5),
-            stackNote.trailingAnchor.constraint(equalTo: self.trailingAnchor),
+            stackNote.topAnchor.constraint(equalTo: self.topAnchor, constant: 2),
+            stackNote.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -15),
             stackNote.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -5)
         ])
     }
