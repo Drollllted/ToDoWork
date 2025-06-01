@@ -11,13 +11,20 @@ final class ListCell: UITableViewCell {
     
     static let id = "Id"
     
+    var completionHandler: ((Bool) -> Void)?
+    
+    var isCompleted: Bool = false
+    
     lazy var completeButton: UIButton = {
-        let button = UIButton()
+        let button = UIButton(type: .system)
         button.layer.cornerRadius = 15
         button.layer.borderWidth = 1
         button.layer.borderColor = UIColor.orange.cgColor
         
+        button.addTarget(self, action: #selector(tapInButton), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
+        
+        button.isUserInteractionEnabled = true
         
         return button
     }()
@@ -62,6 +69,9 @@ final class ListCell: UITableViewCell {
         stack.spacing = 10
         stack.alignment = .leading
         
+        stack.isUserInteractionEnabled = true
+        
+        
         stack.translatesAutoresizingMaskIntoConstraints = false
         stack.addArrangedSubview(nameNoteLabel)
         stack.addArrangedSubview(secondaryNoteLabel)
@@ -83,103 +93,125 @@ final class ListCell: UITableViewCell {
     }
     
     private func setupCell() {
-        self.backgroundColor = .black
-        self.layer.cornerRadius = 15
-        self.layer.borderWidth = 1
-        self.layer.borderColor = UIColor.blue.cgColor
+        backgroundColor = .black
+        contentView.backgroundColor = .black
+        contentView.layer.cornerRadius = 15
+        contentView.layer.borderWidth = 1
+        contentView.layer.borderColor = UIColor.blue.cgColor
+    }
+    
+    //MARK: - Action Button
+    
+    @objc private func tapInButton() {
+        let newState = !(completeButton.image(for: .normal) != nil)
+        updateAppearance(isCompleted: newState)
+        completionHandler?(newState)
     }
     
     //MARK: - Configure
     
-    func configureTodos(with todo: Todo) {
-        nameNoteLabel.text = todo.todo
-        secondaryNoteLabel.text = "From API"
-        dateCreateNoteLabel.text = "20/05/2025"
+    func configure(with model: Any, completion: @escaping (Bool) -> Void){
+        self.completionHandler = completion
         
-        if todo.completed {
+        if let todo = model as? Todo {
+            nameNoteLabel.text = todo.todo
+            secondaryNoteLabel.text = "From API"
+            dateCreateNoteLabel.text = "20/05/2025"
+            updateAppearance(isCompleted: todo.completed)
+        } else if let note = model as? Note {
+            nameNoteLabel.text = note.titleNotes
+            secondaryNoteLabel.text = note.textNotes
+            dateCreateNoteLabel.text = DateFormatterHelper.shared.formattedDate(from: note.dateNotes ?? Date())
+            updateAppearance(isCompleted: note.completed)
+        }
+    }
+    
+    private func updateAppearance(isCompleted: Bool) {
+        if isCompleted{
             applyCompletedStyle()
-        } else {
+        }else {
             applyDefaultStyle()
         }
     }
-
-    func configureNotes(with note: Note) {
-        nameNoteLabel.text = note.titleNotes ?? "No title"
-        secondaryNoteLabel.text = note.textNotes ?? "No description"
-        dateCreateNoteLabel.text = DateFormatterHelper.shared.formattedDate(from: note.dateNotes ?? Date())
-        
-        if note.completed {
-            applyCompletedStyle()
-        } else {
-            applyDefaultStyle()
-        }
-    }
-
+    
     private func applyCompletedStyle() {
-        nameNoteLabel.attributedText = strikeText(text: nameNoteLabel.text ?? "")
-        secondaryNoteLabel.attributedText = strikeText(text: secondaryNoteLabel.text ?? "")
-        dateCreateNoteLabel.attributedText = strikeText(text: dateCreateNoteLabel.text ?? "")
+        let strikeAttributes: [NSAttributedString.Key: Any] = [
+            .strikethroughStyle: NSUnderlineStyle.single.rawValue,
+            .strikethroughColor: UIColor.gray,
+            .foregroundColor: UIColor.gray
+        ]
+        
+        nameNoteLabel.attributedText = NSAttributedString(
+            string: nameNoteLabel.text ?? "",
+            attributes: strikeAttributes
+        )
+        
+        secondaryNoteLabel.attributedText = NSAttributedString(
+            string: secondaryNoteLabel.text ?? "",
+            attributes: strikeAttributes
+        )
+        
+        dateCreateNoteLabel.attributedText = NSAttributedString(
+            string: dateCreateNoteLabel.text ?? "",
+            attributes: strikeAttributes
+        )
         
         completeButton.setImage(UIImage(systemName: "checkmark"), for: .normal)
         completeButton.backgroundColor = .systemOrange
-        
         secondaryNoteLabel.textColor = .darkGray
         dateCreateNoteLabel.textColor = .systemOrange
     }
-
+    
     private func applyDefaultStyle() {
-        nameNoteLabel.textColor = .white
-        secondaryNoteLabel.textColor = .lightGray
-        dateCreateNoteLabel.textColor = .gray
+        let strikeAttributes: [NSAttributedString.Key: Any] = [
+            .strikethroughStyle: NSUnderlineStyle.single.rawValue,
+            .strikethroughColor: UIColor.clear,
+            .foregroundColor: UIColor.clear
+        ]
         
-        nameNoteLabel.attributedText = nil
-        secondaryNoteLabel.attributedText = nil
-        dateCreateNoteLabel.attributedText = nil
+        nameNoteLabel.attributedText = NSAttributedString(
+            string: nameNoteLabel.text ?? "",
+            attributes: strikeAttributes
+        )
+        
+        secondaryNoteLabel.attributedText = NSAttributedString(
+            string: secondaryNoteLabel.text ?? "",
+            attributes: strikeAttributes
+        )
+        
+        dateCreateNoteLabel.attributedText = NSAttributedString(
+            string: dateCreateNoteLabel.text ?? "",
+            attributes: strikeAttributes
+        )
         
         completeButton.setImage(nil, for: .normal)
         completeButton.backgroundColor = .clear
+        nameNoteLabel.textColor = .white
+        secondaryNoteLabel.textColor = .lightGray
+        dateCreateNoteLabel.textColor = .gray
     }
- 
-    //MARK: - Strike text
-    
-    private func strikeText(text: String) -> NSMutableAttributedString {
-        let attributedString = NSMutableAttributedString(string: text)
-        attributedString.addAttribute(.strikethroughStyle,
-                                    value: NSUnderlineStyle.single.rawValue,
-                                    range: NSRange(location: 0, length: attributedString.length))
-        attributedString.addAttribute(.strikethroughColor,
-                                    value: UIColor.gray,
-                                    range: NSRange(location: 0, length: attributedString.length))
-        attributedString.addAttribute(.foregroundColor,
-                                    value: UIColor.gray,
-                                    range: NSRange(location: 0, length: attributedString.length))
-        return attributedString
-    }
-    
-    private func notStrikeText(text: String) -> NSMutableAttributedString {
-        
-        return NSMutableAttributedString()
-    }
-    
 }
 extension ListCell {
     
     func setupUI(){
-        addSubview(completeButton)
-        addSubview(stackNote)
+        contentView.addSubview(completeButton)
+        contentView.addSubview(stackNote)
+
+        contentView.isUserInteractionEnabled = true
+        self.isUserInteractionEnabled = true
     }
     
     func constraintsUI() {
         NSLayoutConstraint.activate([
-            completeButton.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 15),
-            completeButton.topAnchor.constraint(equalTo: self.topAnchor, constant: 15),
-            completeButton.heightAnchor.constraint(equalToConstant: 30),
+            completeButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 15),
+            completeButton.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             completeButton.widthAnchor.constraint(equalToConstant: 30),
+            completeButton.heightAnchor.constraint(equalToConstant: 30),
             
             stackNote.leadingAnchor.constraint(equalTo: completeButton.trailingAnchor, constant: 15),
-            stackNote.topAnchor.constraint(equalTo: self.topAnchor, constant: 2),
-            stackNote.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -15),
-            stackNote.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -5)
+            stackNote.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15),
+            stackNote.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
+            stackNote.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10)
         ])
     }
     
