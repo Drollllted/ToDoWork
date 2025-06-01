@@ -11,11 +11,15 @@ final class ListCell: UITableViewCell {
     
     static let id = "Id"
     
+    var completionHandler: ((Bool) -> Void)?
+    
     lazy var completeButton: UIButton = {
         let button = UIButton()
         button.layer.cornerRadius = 15
         button.layer.borderWidth = 1
         button.layer.borderColor = UIColor.orange.cgColor
+        
+        button.addTarget(self, action: #selector(tapInButton), for: .touchUpInside)
         
         button.translatesAutoresizingMaskIntoConstraints = false
         
@@ -89,6 +93,12 @@ final class ListCell: UITableViewCell {
         self.layer.borderColor = UIColor.blue.cgColor
     }
     
+    //MARK: - Action Button
+    
+    @objc func tapInButton() {
+        
+    }
+    
     //MARK: - Configure
     
     func configureTodos(with todo: Todo) {
@@ -102,7 +112,7 @@ final class ListCell: UITableViewCell {
             applyDefaultStyle()
         }
     }
-
+    
     func configureNotes(with note: Note) {
         nameNoteLabel.text = note.titleNotes ?? "No title"
         secondaryNoteLabel.text = note.textNotes ?? "No description"
@@ -114,44 +124,63 @@ final class ListCell: UITableViewCell {
             applyDefaultStyle()
         }
     }
-
+    
     private func applyCompletedStyle() {
-        nameNoteLabel.attributedText = strikeText(text: nameNoteLabel.text ?? "")
-        secondaryNoteLabel.attributedText = strikeText(text: secondaryNoteLabel.text ?? "")
-        dateCreateNoteLabel.attributedText = strikeText(text: dateCreateNoteLabel.text ?? "")
+        let strikeAttributes: [NSAttributedString.Key: Any] = [
+            .strikethroughStyle: NSUnderlineStyle.single.rawValue,
+            .strikethroughColor: UIColor.gray,
+            .foregroundColor: UIColor.gray
+        ]
+        
+        nameNoteLabel.attributedText = NSAttributedString(
+            string: nameNoteLabel.text ?? "",
+            attributes: strikeAttributes
+        )
+        
+        secondaryNoteLabel.attributedText = NSAttributedString(
+            string: secondaryNoteLabel.text ?? "",
+            attributes: strikeAttributes
+        )
+        
+        dateCreateNoteLabel.attributedText = NSAttributedString(
+            string: dateCreateNoteLabel.text ?? "",
+            attributes: strikeAttributes
+        )
         
         completeButton.setImage(UIImage(systemName: "checkmark"), for: .normal)
         completeButton.backgroundColor = .systemOrange
-        
         secondaryNoteLabel.textColor = .darkGray
         dateCreateNoteLabel.textColor = .systemOrange
     }
-
+    
     private func applyDefaultStyle() {
-        nameNoteLabel.textColor = .white
-        secondaryNoteLabel.textColor = .lightGray
-        dateCreateNoteLabel.textColor = .gray
+        let strikeAttributes: [NSAttributedString.Key: Any] = [
+            .strikethroughStyle: NSUnderlineStyle.single.rawValue,
+            .strikethroughColor: UIColor.clear,
+            .foregroundColor: UIColor.clear
+        ]
+        
+        nameNoteLabel.attributedText = NSAttributedString(
+            string: nameNoteLabel.text ?? "",
+            attributes: strikeAttributes
+        )
+        
+        secondaryNoteLabel.attributedText = NSAttributedString(
+            string: secondaryNoteLabel.text ?? "",
+            attributes: strikeAttributes
+        )
+        
+        dateCreateNoteLabel.attributedText = NSAttributedString(
+            string: dateCreateNoteLabel.text ?? "",
+            attributes: strikeAttributes
+        )
         
         completeButton.setImage(nil, for: .normal)
         completeButton.backgroundColor = .clear
+        nameNoteLabel.textColor = .white
+        secondaryNoteLabel.textColor = .lightGray
+        dateCreateNoteLabel.textColor = .gray
     }
- 
-    //MARK: - Strike text
-    
-    func strikeText(text: String) -> NSMutableAttributedString {
-        let attributedString = NSMutableAttributedString(string: text)
-        attributedString.addAttribute(.strikethroughStyle,
-                                    value: NSUnderlineStyle.single.rawValue,
-                                    range: NSRange(location: 0, length: attributedString.length))
-        attributedString.addAttribute(.strikethroughColor,
-                                    value: UIColor.gray,
-                                    range: NSRange(location: 0, length: attributedString.length))
-        attributedString.addAttribute(.foregroundColor,
-                                    value: UIColor.gray,
-                                    range: NSRange(location: 0, length: attributedString.length))
-        return attributedString
-    }
-    
 }
 extension ListCell {
     
