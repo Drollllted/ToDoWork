@@ -13,15 +13,18 @@ final class ListCell: UITableViewCell {
     
     var completionHandler: ((Bool) -> Void)?
     
+    var isCompleted: Bool = false
+    
     lazy var completeButton: UIButton = {
-        let button = UIButton()
+        let button = UIButton(type: .system)
         button.layer.cornerRadius = 15
         button.layer.borderWidth = 1
         button.layer.borderColor = UIColor.orange.cgColor
         
         button.addTarget(self, action: #selector(tapInButton), for: .touchUpInside)
-        
         button.translatesAutoresizingMaskIntoConstraints = false
+        
+        button.isUserInteractionEnabled = true
         
         return button
     }()
@@ -66,6 +69,9 @@ final class ListCell: UITableViewCell {
         stack.spacing = 10
         stack.alignment = .leading
         
+        stack.isUserInteractionEnabled = true
+        
+        
         stack.translatesAutoresizingMaskIntoConstraints = false
         stack.addArrangedSubview(nameNoteLabel)
         stack.addArrangedSubview(secondaryNoteLabel)
@@ -87,40 +93,43 @@ final class ListCell: UITableViewCell {
     }
     
     private func setupCell() {
-        self.backgroundColor = .black
-        self.layer.cornerRadius = 15
-        self.layer.borderWidth = 1
-        self.layer.borderColor = UIColor.blue.cgColor
+        backgroundColor = .black
+        contentView.backgroundColor = .black
+        contentView.layer.cornerRadius = 15
+        contentView.layer.borderWidth = 1
+        contentView.layer.borderColor = UIColor.blue.cgColor
     }
     
     //MARK: - Action Button
     
-    @objc func tapInButton() {
-        
+    @objc private func tapInButton() {
+        let newState = !(completeButton.image(for: .normal) != nil)
+        updateAppearance(isCompleted: newState)
+        completionHandler?(newState)
     }
     
     //MARK: - Configure
     
-    func configureTodos(with todo: Todo) {
-        nameNoteLabel.text = todo.todo
-        secondaryNoteLabel.text = "From API"
-        dateCreateNoteLabel.text = "20/05/2025"
+    func configure(with model: Any, completion: @escaping (Bool) -> Void){
+        self.completionHandler = completion
         
-        if todo.completed {
-            applyCompletedStyle()
-        } else {
-            applyDefaultStyle()
+        if let todo = model as? Todo {
+            nameNoteLabel.text = todo.todo
+            secondaryNoteLabel.text = "From API"
+            dateCreateNoteLabel.text = "20/05/2025"
+            updateAppearance(isCompleted: todo.completed)
+        } else if let note = model as? Note {
+            nameNoteLabel.text = note.titleNotes
+            secondaryNoteLabel.text = note.textNotes
+            dateCreateNoteLabel.text = DateFormatterHelper.shared.formattedDate(from: note.dateNotes ?? Date())
+            updateAppearance(isCompleted: note.completed)
         }
     }
     
-    func configureNotes(with note: Note) {
-        nameNoteLabel.text = note.titleNotes ?? "No title"
-        secondaryNoteLabel.text = note.textNotes ?? "No description"
-        dateCreateNoteLabel.text = DateFormatterHelper.shared.formattedDate(from: note.dateNotes ?? Date())
-        
-        if note.completed {
+    private func updateAppearance(isCompleted: Bool) {
+        if isCompleted{
             applyCompletedStyle()
-        } else {
+        }else {
             applyDefaultStyle()
         }
     }
@@ -185,21 +194,24 @@ final class ListCell: UITableViewCell {
 extension ListCell {
     
     func setupUI(){
-        addSubview(completeButton)
-        addSubview(stackNote)
+        contentView.addSubview(completeButton)
+        contentView.addSubview(stackNote)
+
+        contentView.isUserInteractionEnabled = true
+        self.isUserInteractionEnabled = true
     }
     
     func constraintsUI() {
         NSLayoutConstraint.activate([
-            completeButton.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 15),
-            completeButton.topAnchor.constraint(equalTo: self.topAnchor, constant: 15),
-            completeButton.heightAnchor.constraint(equalToConstant: 30),
+            completeButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 15),
+            completeButton.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             completeButton.widthAnchor.constraint(equalToConstant: 30),
+            completeButton.heightAnchor.constraint(equalToConstant: 30),
             
             stackNote.leadingAnchor.constraint(equalTo: completeButton.trailingAnchor, constant: 15),
-            stackNote.topAnchor.constraint(equalTo: self.topAnchor, constant: 2),
-            stackNote.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -15),
-            stackNote.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -5)
+            stackNote.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15),
+            stackNote.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
+            stackNote.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10)
         ])
     }
     

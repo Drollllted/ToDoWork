@@ -119,12 +119,17 @@ extension ListViewController: UITableViewDelegate, UITableViewDataSource{
         
         let item = viewModel.item(at: indexPath.row)
         
-        if let todo = item as? Todo {
-            cell.configureTodos(with: todo)
-        } else if let note = item as? Note {
-            cell.configureNotes(with: note)
+        cell.configure(with: item) { isCompleted in
+            if var todo = item as? Todo {
+                todo.completed = isCompleted
+            } else if let note = item as? Note {
+                note.completed = isCompleted
+                try? CoreDataManager.shared.addOrUpdateNote(note: note)
+            }
         }
+        
         return cell
+        
     }
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 106
@@ -132,9 +137,7 @@ extension ListViewController: UITableViewDelegate, UITableViewDataSource{
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        viewModel.toggleCompleted(at: indexPath.row)
-        
-        tableView.reloadRows(at: [indexPath], with: .automatic)
+        print("Touch up")
     }
     
 }
