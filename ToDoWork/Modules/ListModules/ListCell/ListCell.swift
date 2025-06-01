@@ -94,13 +94,62 @@ final class ListCell: UITableViewCell {
     func configureTodos(with todo: Todo) {
         nameNoteLabel.text = todo.todo
         secondaryNoteLabel.text = "From API"
+        dateCreateNoteLabel.text = "20/05/2025"
         
+        if todo.completed {
+            applyCompletedStyle()
+        } else {
+            applyDefaultStyle()
+        }
     }
+
+    func configureNotes(with note: Note) {
+        nameNoteLabel.text = note.titleNotes ?? "No title"
+        secondaryNoteLabel.text = note.textNotes ?? "No description"
+        dateCreateNoteLabel.text = DateFormatterHelper.shared.formattedDate(from: note.dateNotes ?? Date())
+        
+        if note.completed {
+            applyCompletedStyle()
+        } else {
+            applyDefaultStyle()
+        }
+    }
+
+    private func applyCompletedStyle() {
+        nameNoteLabel.attributedText = strikeText(text: nameNoteLabel.text ?? "")
+        secondaryNoteLabel.attributedText = strikeText(text: secondaryNoteLabel.text ?? "")
+        dateCreateNoteLabel.attributedText = strikeText(text: dateCreateNoteLabel.text ?? "")
+        
+        completeButton.setImage(UIImage(systemName: "checkmark"), for: .normal)
+        completeButton.backgroundColor = .systemOrange
+        
+        secondaryNoteLabel.textColor = .darkGray
+        dateCreateNoteLabel.textColor = .systemOrange
+    }
+
+    private func applyDefaultStyle() {
+        nameNoteLabel.textColor = .white
+        secondaryNoteLabel.textColor = .lightGray
+        dateCreateNoteLabel.textColor = .gray
+        
+        completeButton.setImage(nil, for: .normal)
+        completeButton.backgroundColor = .clear
+    }
+ 
+    //MARK: - Strike text
     
-    func configureNotes(with noted: Note) {
-        nameNoteLabel.text = noted.titleNotes
-        secondaryNoteLabel.text = noted.textNotes
-        dateCreateNoteLabel.text = DateFormatterHelper.shared.formattedDate(from: noted.dateNotes ?? Date())
+    func strikeText(text: String) -> NSMutableAttributedString {
+        let attributedString = NSMutableAttributedString(string: text)
+        attributedString.addAttribute(.strikethroughStyle,
+                                    value: NSUnderlineStyle.single.rawValue,
+                                    range: NSRange(location: 0, length: attributedString.length))
+        attributedString.addAttribute(.strikethroughColor,
+                                    value: UIColor.gray,
+                                    range: NSRange(location: 0, length: attributedString.length))
+        attributedString.addAttribute(.foregroundColor,
+                                    value: UIColor.gray,
+                                    range: NSRange(location: 0, length: attributedString.length))
+        return attributedString
     }
     
 }

@@ -23,12 +23,12 @@ final class ListViewController: UIViewController {
         view.backgroundColor = .black
         setupNavBar()
         delegateTableView()
-        viewModel.fetchTodos()
+        fetch()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        setupBinding()
+        self.listView.tableNoteView.reloadData()
     }
     
     private func setupNavBar() {
@@ -39,6 +39,12 @@ final class ListViewController: UIViewController {
         let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(createNotes))
         navigationItem.rightBarButtonItem = addButton
         
+    }
+    
+    private func fetch() {
+        viewModel.fetchTodos()
+        viewModel.fetchNotes()
+        setupBinding()
     }
     
     private func delegateTableView() {
@@ -126,6 +132,9 @@ extension ListViewController: UITableViewDelegate, UITableViewDataSource{
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        viewModel.toggleCompleted(at: indexPath.row)
+        
+        tableView.reloadRows(at: [indexPath], with: .automatic)
     }
     
 }

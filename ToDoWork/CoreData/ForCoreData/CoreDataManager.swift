@@ -42,13 +42,6 @@ final class CoreDataManager {
     
     //MARK: - Fetch, Add, Update, Delete notes
     
-    func fetchNotes() {
-        let req = Note.fetchRequest()
-        if let notes = try? persistentContainer.viewContext.fetch(req) {
-            
-        }
-    }
-    
     func addOrUpdateNote(note: Note) throws {
         let context = persistentContainer.viewContext
         try context.performAndWait {
