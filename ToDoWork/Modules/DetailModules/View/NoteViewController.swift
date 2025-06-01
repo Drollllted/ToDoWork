@@ -10,6 +10,7 @@ import UIKit
 final class NoteViewController: UIViewController{
     
     private var noteView: NoteView!
+    weak var noteCoordinator: NoteCoordinator?
     
     override func loadView() {
         noteView = NoteView()
@@ -18,6 +19,16 @@ final class NoteViewController: UIViewController{
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = .black
+        setupNavBar()
     }
+    
+    private func setupNavBar() {
+        self.navigationItem.title = "Note"
+        navigationController?.navigationBar.titleTextAttributes = [.foregroundColor : UIColor.white]
+        navigationController?.navigationBar.prefersLargeTitles = false
+    }
+    
+    
     
 }

@@ -19,4 +19,10 @@ class ListCoordinator: BaseCoordinator{
         listVC.listCoordinatesDelegate = self
         self.navigationController.pushViewController(listVC, animated: true)
     }
+    
+    func goToNoteVC() {
+        let noteCoordinator = NoteCoordinator(navigationController: navigationController)
+        add(coordinator: noteCoordinator)
+        noteCoordinator.start()
+    }
 }

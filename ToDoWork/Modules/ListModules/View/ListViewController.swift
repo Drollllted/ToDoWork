@@ -61,7 +61,7 @@ final class ListViewController: UIViewController {
         
         viewModel.errors = {[weak self] errorMessage in
             let alert = UIAlertController(title: "Warning", message: errorMessage, preferredStyle: .alert)
-            let alertAction = UIAlertAction(title: "Ok", style: .cancel)
+            _ = UIAlertAction(title: "Ok", style: .cancel)
             self?.present(alert, animated: true)
         }
     }
@@ -132,9 +132,9 @@ extension ListViewController: UITableViewDelegate, UITableViewDataSource{
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        viewModel.toggleCompleted(at: indexPath.row)
-        
-        tableView.reloadRows(at: [indexPath], with: .automatic)
+//        viewModel.toggleCompleted(at: indexPath.row)
+//        tableView.reloadRows(at: [indexPath], with: .automatic)
+        listCoordinatesDelegate?.goToNoteVC()
     }
     
 }
