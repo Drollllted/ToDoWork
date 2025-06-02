@@ -137,7 +137,17 @@ extension ListViewController: UITableViewDelegate, UITableViewDataSource{
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        print("Touch up")
+        let item = viewModel.item(at: indexPath.row)
+        
+        if let note = item as? Note {
+            let noteViewModel = NoteViewModel(noteType: .coreData(note: note))
+            listCoordinatesDelegate?.goToNoteVC(with: noteViewModel)
+        } else if let todo = item as? Todo {
+            let noteViewModel = NoteViewModel(noteType: .api(todo: todo))
+            listCoordinatesDelegate?.goToNoteVC(with: noteViewModel)
+            
+        }
+        
     }
     
 }
