@@ -56,36 +56,36 @@ final class ListViewModel {
     
     func item(at index: Int) -> Any {
         if isSearching {
-             guard index < filteredItems.count else {
-                 fatalError("Index out of range")
-             }
-             return filteredItems[index]
-         } else {
-             if index < todos.count {
-                 return todos[index]
-             } else {
-                 return notes[index - todos.count]
-             }
-         }
+            guard index < filteredItems.count else {
+                fatalError("Index out of range")
+            }
+            return filteredItems[index]
+        } else {
+            let allItems = getAllItems() // Уже отсортированы
+            guard index < allItems.count else {
+                fatalError("Index out of range")
+            }
+            return allItems[index]
+        }
     }
     
     func toggleCompleted(at index: Int) {
-         if index < todos.count {
-             todos[index].completed.toggle()
-         } else {
-             let noteIndex = index - todos.count
-             let note = notes[noteIndex]
-             note.completed.toggle()
-             do {
-                 try coreDataManager.addOrUpdateNote(note: note)
-                 try coreDataManager.getNotes()
-             } catch {
-                 errors?(error.localizedDescription)
-             }
-         }
-         onDataUpdates?()
-     }
-     
+        if index < todos.count {
+            todos[index].completed.toggle()
+        } else {
+            let noteIndex = index - todos.count
+            let note = notes[noteIndex]
+            note.completed.toggle()
+            do {
+                try coreDataManager.addOrUpdateNote(note: note)
+                try coreDataManager.getNotes()
+            } catch {
+                errors?(error.localizedDescription)
+            }
+        }
+        onDataUpdates?()
+    }
+    
     func deleteItem(at index: Int, completion: @escaping (Bool) -> Void) {
         if index < todos.count {
             todos.remove(at: index)
@@ -111,7 +111,7 @@ final class ListViewModel {
     //MARK: Count All
     
     func addAllItems() -> Int {
-        return isSearching ? filteredItems.count : notes.count + todos.count
+        return isSearching ? filteredItems.count : getAllItems().count
     }
     
     //MARK: - Filters
@@ -121,31 +121,62 @@ final class ListViewModel {
         getItems += todos
         getItems += notes
         
-        return getItems
+        return sortedItemsByDates(items: getItems)
     }
-        func filterContentForSearchText(_ searchText: String) {
-            let searchText = searchText.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
-            
-            if searchText.isEmpty {
-                isSearching = false
-                onDataUpdates?()
-                return
-            }
-            
-            isSearching = true
-            let allItems = getAllItems()
-            
-            filteredItems = allItems.filter { item in
-                if let todo = item as? Todo {
-                    return todo.todo.lowercased().contains(searchText)
-                } else if let note = item as? Note {
-                    let titleContains = note.titleNotes?.lowercased().contains(searchText) ?? false
-                    let textContains = note.textNotes?.lowercased().contains(searchText) ?? false
-                    return titleContains || textContains
-                }
-                return false
-            }
-            
+    func filterContentForSearchText(_ searchText: String) {
+        let searchText = searchText.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        
+        if searchText.isEmpty {
+            isSearching = false
             onDataUpdates?()
+            return
         }
+        
+        isSearching = true
+        let allItems = getAllItems()
+        
+        filteredItems = allItems.filter { item in
+            if let todo = item as? Todo {
+                return todo.todo.lowercased().contains(searchText)
+            } else if let note = item as? Note {
+                let titleContains = note.titleNotes?.lowercased().contains(searchText) ?? false
+                let textContains = note.textNotes?.lowercased().contains(searchText) ?? false
+                return titleContains || textContains
+            }
+            return false
+        }
+        
+        onDataUpdates?()
+    }
+    
+    //MARK: - Sorted TableView
+    
+    func sortedItemsByDates(items: [Any]) -> [Any] {
+        return items.sorted { item1, item2 in
+            let date1: Date
+            let date2: Date
+            
+            if let todo1 = item1 as? Todo {
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateFormat = "dd/MM/yyyy"
+                date1 = dateFormatter.date(from: "20/05/2025") ?? Date()
+            } else if let note1 = item1 as? Note {
+                date1 = note1.dateNotes ?? Date()
+            } else {
+                date1 = Date()
+            }
+            
+            if let todo2 = item2 as? Todo {
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateFormat = "dd/MM/yyyy"
+                date2 = dateFormatter.date(from: "20/05/2025") ?? Date()
+            } else if let note2 = item2 as? Note {
+                date2 = note2.dateNotes ?? Date()
+            } else {
+                date2 = Date()
+            }
+            
+            return date1 > date2
+        }
+    }
 }
