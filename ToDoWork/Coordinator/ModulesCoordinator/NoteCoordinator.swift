@@ -43,7 +43,8 @@ class NoteCoordinator: BaseCoordinator {
             noteVC.viewModel = NoteViewModel(note: noteToEdit)
             noteVC.noteCoordinator = self
             noteVC.onSave = { [weak self] in
-                self?.onFinish?()
+                completion()
+                self?.navigationController.popViewController(animated: true)
             }
             navigationController.pushViewController(noteVC, animated: true)
         }
@@ -51,6 +52,5 @@ class NoteCoordinator: BaseCoordinator {
     
     func dismiss() {
         navigationController.popViewController(animated: true)
-        onFinish?()
     }
 }

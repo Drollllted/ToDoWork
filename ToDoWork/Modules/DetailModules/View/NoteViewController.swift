@@ -93,7 +93,6 @@ final class NoteViewController: UIViewController {
             text: noteView.textViewNote.text
         )
         onSave?()
-        noteCoordinator?.dismiss()
-
+        navigationController?.popViewController(animated: true)
     }
 }
