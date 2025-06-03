@@ -24,6 +24,7 @@ final class ListViewController: UIViewController {
         setupNavBar()
         delegateTableView()
         fetch()
+        setupLongPressGesture()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -66,6 +67,14 @@ final class ListViewController: UIViewController {
         }
     }
     
+    private func setupLongPressGesture() {
+        let longPressRecognizer = UILongPressGestureRecognizer(
+            target: self,
+            action: #selector(handleLongPress(_:))
+        )
+        listView.tableNoteView.addGestureRecognizer(longPressRecognizer)
+    }
+    
     @objc private func createNotes() {
         let alertController = UIAlertController(title: "Create new note", message: "What's title?", preferredStyle: .alert)
         alertController.addTextField { tf in
@@ -102,8 +111,6 @@ final class ListViewController: UIViewController {
         })
         
         present(alertController, animated: true)
-        
-        
     }
 
 
@@ -145,10 +152,46 @@ extension ListViewController: UITableViewDelegate, UITableViewDataSource{
         } else if let todo = item as? Todo {
             let noteViewModel = NoteViewModel(noteType: .api(todo: todo))
             listCoordinatesDelegate?.goToNoteVC(with: noteViewModel)
-            
         }
-        
     }
     
+    func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        
+        let item = viewModel.item(at: indexPath.row)
+        
+        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
+            let editAction = UIAction(
+                title: "Edit",
+                image: UIImage(systemName: "pencil")
+            ) { _ in
+
+            }
+            
+            let shareAction = UIAction(
+                title: "Share",
+                image: UIImage(systemName: "square.and.arrow.up")
+            ) { _ in
+
+            }
+            
+            let deleteAction = UIAction(
+                title: "Delete",
+                image: UIImage(systemName: "trash"),
+                attributes: .destructive
+            ) { _ in
+
+            }
+            return UIMenu(title: "", children: [editAction, shareAction, deleteAction])
+        }
+    }
+    
+    @objc func handleLongPress(_ gesture: UILongPressGestureRecognizer) {
+        guard gesture.state == .began else { return }
+        
+        let point = gesture.location(in: listView.tableNoteView)
+        if let indexPath = listView.tableNoteView.indexPathForRow(at: point) {
+            let item = viewModel.item(at: indexPath.row)
+        }
+    }
 }
 
