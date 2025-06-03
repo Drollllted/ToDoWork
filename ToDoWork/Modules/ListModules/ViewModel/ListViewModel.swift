@@ -61,7 +61,7 @@ final class ListViewModel {
             }
             return filteredItems[index]
         } else {
-            let allItems = getAllItems() // Уже отсортированы
+            let allItems = getAllItems()
             guard index < allItems.count else {
                 fatalError("Index out of range")
             }
@@ -87,25 +87,43 @@ final class ListViewModel {
     }
     
     func deleteItem(at index: Int, completion: @escaping (Bool) -> Void) {
-        if index < todos.count {
-            todos.remove(at: index)
-            completion(true)
-        } else {
-            let noteIndex = index - todos.count
-            let note = notes[noteIndex]
-            if let id = note.id {
-                do {
-                    try coreDataManager.deleteNotes(id: id)
-                    notes.remove(at: noteIndex)
-                    completion(true)
-                } catch {
-                    errors?(error.localizedDescription)
-                    completion(false)
-                }
+        let allItems = getAllItems()
+        guard index < allItems.count else {
+            completion(false)
+            return
+        }
+
+        let item = allItems[index]
+        
+        if let todo = item as? Todo {
+            if let todoIndex = todos.firstIndex(where: { $0.id == todo.id }) {
+                todos.remove(at: todoIndex)
+                completion(true)
             } else {
                 completion(false)
             }
+        } else if let note = item as? Note {
+            guard let id = note.id else {
+                completion(false)
+                return
+            }
+            
+            do {
+                try coreDataManager.deleteNotes(id: id)
+                try coreDataManager.getNotes()
+                notes = coreDataManager.notes.sorted { note1, note2 in
+                    (note1.dateNotes ?? Date()) > (note2.dateNotes ?? Date())
+                }
+                completion(true)
+            } catch {
+                errors?(error.localizedDescription)
+                completion(false)
+            }
+        } else {
+            completion(false)
         }
+        
+        onDataUpdates?()
     }
     
     //MARK: Count All
@@ -156,7 +174,7 @@ final class ListViewModel {
             let date1: Date
             let date2: Date
             
-            if let todo1 = item1 as? Todo {
+            if item1 is Todo {
                 let dateFormatter = DateFormatter()
                 dateFormatter.dateFormat = "dd/MM/yyyy"
                 date1 = dateFormatter.date(from: "20/05/2025") ?? Date()
@@ -166,7 +184,7 @@ final class ListViewModel {
                 date1 = Date()
             }
             
-            if let todo2 = item2 as? Todo {
+            if item2 is Todo {
                 let dateFormatter = DateFormatter()
                 dateFormatter.dateFormat = "dd/MM/yyyy"
                 date2 = dateFormatter.date(from: "20/05/2025") ?? Date()
