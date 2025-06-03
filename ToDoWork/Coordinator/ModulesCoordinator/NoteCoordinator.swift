@@ -32,18 +32,19 @@ class NoteCoordinator: BaseCoordinator {
     func start(completion: @escaping () -> Void) {
         self.onFinish = completion
         
-        if let note = note {
+        if let todo = todo {
             let noteVC = NoteViewController(reworkEnum: mode)
-            noteVC.viewModel = NoteViewModel(note: note)
+            noteVC.viewModel = NoteViewModel(todo: todo)
+            noteVC.noteCoordinator = self
+            navigationController.pushViewController(noteVC, animated: true)
+        } else {
+            let noteToEdit = note ?? CoreDataManager.shared.createNewNote()
+            let noteVC = NoteViewController(reworkEnum: mode)
+            noteVC.viewModel = NoteViewModel(note: noteToEdit)
             noteVC.noteCoordinator = self
             noteVC.onSave = { [weak self] in
                 self?.onFinish?()
             }
-            navigationController.pushViewController(noteVC, animated: true)
-        } else if let todo = todo {
-            let noteVC = NoteViewController(reworkEnum: mode)
-            noteVC.viewModel = NoteViewModel(todo: todo)
-            noteVC.noteCoordinator = self
             navigationController.pushViewController(noteVC, animated: true)
         }
     }

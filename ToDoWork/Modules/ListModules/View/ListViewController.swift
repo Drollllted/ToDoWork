@@ -77,7 +77,10 @@ final class ListViewController: UIViewController {
     
     @objc private func createNotes() {
         print("ewqw")
-        let noteCoordinator = NoteCoordinator(navigationController: navigationController ?? UINavigationController(), note: nil, mode: .rework)
+        
+        guard let navigationController = listCoordinatesDelegate?.navigationController else {return}
+        
+        let noteCoordinator = NoteCoordinator(navigationController: navigationController, note: nil, mode: .rework)
         noteCoordinator.start { [weak self] in
             self?.viewModel.fetchNotes()
             self?.listView.tableNoteView.reloadData()
