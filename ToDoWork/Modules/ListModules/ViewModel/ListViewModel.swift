@@ -14,6 +14,9 @@ final class ListViewModel {
     private let apiManager = APIManager.shared
     private let coreDataManager = CoreDataManager.shared
     
+    private var filteredItems: [Any] = []
+    var isSearching = false
+    
     var onDataUpdates: (() -> Void)?
     var errors: ((String) -> Void)?
     
@@ -52,11 +55,18 @@ final class ListViewModel {
     }
     
     func item(at index: Int) -> Any {
-        if index < todos.count {
-            return todos[index]
-        } else {
-            return notes[index - todos.count]
-        }
+        if isSearching {
+             guard index < filteredItems.count else {
+                 fatalError("Index out of range")
+             }
+             return filteredItems[index]
+         } else {
+             if index < todos.count {
+                 return todos[index]
+             } else {
+                 return notes[index - todos.count]
+             }
+         }
     }
     
     func toggleCompleted(at index: Int) {
@@ -101,7 +111,39 @@ final class ListViewModel {
     //MARK: Count All
     
     func addAllItems() -> Int {
-        return notes.count + todos.count
+        return isSearching ? filteredItems.count : notes.count + todos.count
+    }
+    
+    //MARK: - Filters
+    
+    private func getAllItems() -> [Any] {
+        var getItems: [Any] = []
+        getItems += todos
+        getItems += notes
+        
+        return getItems
+    }
+    
+    func filterContentForSearchText(_ searchText: String) {
+        if searchText.isEmpty {
+            isSearching = false
+            onDataUpdates?()
+            return
+        }
+        
+        isSearching = true
+        let allItems = getAllItems()
+        _ = allItems.filter { item in
+            if let todo = item as? Todo {
+                return todo.todo.lowercased().contains(searchText.lowercased())
+            } else if let note = item as? Note {
+                return note.titleNotes?.lowercased().contains(searchText.lowercased()) ?? false
+            }
+            return false
+        }
+        
+        onDataUpdates?()
+        
     }
     
 }

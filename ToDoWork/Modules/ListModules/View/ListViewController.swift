@@ -12,6 +12,7 @@ final class ListViewController: UIViewController {
     weak var listCoordinatesDelegate: ListCoordinator?
     private var listView: ListView!
     private let viewModel = ListViewModel()
+    private let searchController = UISearchController(searchResultsController: nil)
     
     override func loadView() {
         listView = ListView()
@@ -25,6 +26,8 @@ final class ListViewController: UIViewController {
         delegateTableView()
         fetch()
         setupLongPressGesture()
+        setupSearchController()
+        setupTapGesture()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -36,6 +39,9 @@ final class ListViewController: UIViewController {
         navigationController?.navigationBar.prefersLargeTitles = true
         title = "ToDoList"
         navigationController?.navigationBar.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
+        
+        navigationItem.searchController = searchController
+        navigationItem.hidesSearchBarWhenScrolling = false
         
         let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(createNotes))
         navigationItem.rightBarButtonItem = addButton
@@ -67,12 +73,36 @@ final class ListViewController: UIViewController {
         }
     }
     
+    private func setupSearchController() {
+        searchController.searchResultsUpdater = self
+        searchController.obscuresBackgroundDuringPresentation = false
+        searchController.searchBar.searchTextField.textColor = .white
+        
+        let placeholderAttributes = [NSAttributedString.Key.foregroundColor: UIColor.lightGray]
+        let attributedPlaceholder = NSAttributedString(string: "Search notes", attributes: placeholderAttributes)
+        UITextField.appearance(whenContainedInInstancesOf: [UISearchBar.self]).attributedPlaceholder = attributedPlaceholder
+        
+        if let searchIcon = searchController.searchBar.searchTextField.leftView as? UIImageView {
+            searchIcon.tintColor = .lightGray
+        }
+    }
+    
+    private func setupTapGesture() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        tapGesture.cancelsTouchesInView = false
+        view.addGestureRecognizer(tapGesture)
+    }
+    
     private func setupLongPressGesture() {
         let longPressRecognizer = UILongPressGestureRecognizer(
             target: self,
             action: #selector(handleLongPress(_:))
         )
         listView.tableNoteView.addGestureRecognizer(longPressRecognizer)
+    }
+    
+    @objc private func dismissKeyboard() {
+        view.endEditing(true)
     }
     
     @objc private func createNotes() {
@@ -164,12 +194,6 @@ extension ListViewController: UITableViewDelegate, UITableViewDataSource{
                 title: "Share",
                 image: UIImage(systemName: "square.and.arrow.up")
             ) { _ in
-//                print("Поделиться элементом: \(item)")
-//                let textToShare = "Поделиться: \()"
-//                let activityVC = UIActivityViewController(
-//                    activityItems: [textToShare],
-//                    applicationActivities: nil
-//                )
                 if let todo = item as? Todo {
                     let textToShare = "Поделиться \(todo.todo)"
                     let activityVC = UIActivityViewController(activityItems: [textToShare], applicationActivities: nil)
@@ -203,4 +227,17 @@ extension ListViewController: UITableViewDelegate, UITableViewDataSource{
         print("231")
     }
     
+}
+extension ListViewController: UISearchResultsUpdating{
+    func updateSearchResults(for searchController: UISearchController) {
+        guard let searchText = searchController.searchBar.text else {return}
+        viewModel.filterContentForSearchText(searchText)
+    }
+    
+}
+
+extension ListViewController: UISearchControllerDelegate {
+    func didDismissSearchController(_ searchController: UISearchController) {
+        viewModel.isSearching = false
+    }
 }
