@@ -7,70 +7,39 @@
 
 import UIKit
 
-enum NoteType {
-    case coreData(note: Note)
-    case api(todo: Todo)
-}
-
 final class NoteViewModel {
-    
-    private var noteType: NoteType
+    private let note: Note
     private let coreDataManager = CoreDataManager.shared
     
     var onUpdate: (() -> Void)?
     
-    var isReadOnly: Bool {
-        if case .api(_) = noteType {
-            return true
-        }
-        return false
-    }
-    
     var title: String {
-        switch noteType {
-        case .coreData(let note):
-            return note.titleNotes ?? ""
-        case .api(let todo):
-            return todo.todo
-        }
+        note.titleNotes ?? ""
     }
     
-    var textView: String {
-        switch noteType {
-        case .coreData(let note):
-            return note.textNotes ?? ""
-        case .api(_):
-            return "From API(Note Write, Only Read)"
-        }
+    var text: String {
+        note.textNotes ?? ""
     }
     
-    var date: String{
-        switch noteType {
-        case .coreData(let note):
-            guard let date = note.dateNotes else {return ""}
-            return DateFormatterHelper.shared.formattedDate(from: date)
-        case .api(_):
-            return "20/05/2025"
-        }
+    var date: String {
+        DateFormatterHelper.shared.formattedDate(from: note.dateNotes ?? Date())
     }
     
-    init(noteType: NoteType) {
-        self.noteType = noteType
+    init(note: Note) {
+        self.note = note
     }
     
-    func updateNotes(title: String, text: String) {
-        guard case .coreData(let note) = noteType else {
-            return
-        }
+    func updateNote(title: String, text: String) {
         note.titleNotes = title
         note.textNotes = text
+        note.dateNotes = Date()
         
         do {
             try coreDataManager.addOrUpdateNote(note: note)
             coreDataManager.saveContext()
+            onUpdate?()
         } catch {
-            print("Error with viewModel: \(error.localizedDescription)")
+            print("Error saving note: \(error.localizedDescription)")
         }
     }
-    
 }

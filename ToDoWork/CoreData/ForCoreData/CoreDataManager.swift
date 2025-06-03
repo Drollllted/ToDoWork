@@ -53,7 +53,7 @@ final class CoreDataManager {
                 throw error
                 }
             } else {
-                    if let existingNote = try? getNoteById(id: note.id!) {
+                if let existingNote = try? context.existingObject(with: note.objectID) as? Note {
                         existingNote.textNotes = note.textNotes
                         existingNote.titleNotes = note.titleNotes
                         do {
@@ -111,6 +111,15 @@ final class CoreDataManager {
             }
             return note
         }
+    
+    func createNewNote() -> Note {
+        let context = persistentContainer.viewContext
+        let newNote = Note(context: context)
+        newNote.id = UUID()
+        newNote.dateNotes = Date()
+        newNote.completed = false
+        return newNote
+    }
         
         
     }

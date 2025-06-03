@@ -10,15 +10,26 @@ import UIKit
 class NoteCoordinator: BaseCoordinator{
     
     private let navigationController: UINavigationController
+    private let note: Note?
+    private var onFinish: (() -> Void)?
     
-    init(navigationController: UINavigationController) {
+    init(navigationController: UINavigationController, note: Note?) {
         self.navigationController = navigationController
+        self.note = note
     }
     
-    override func start() {
-        let noteViewController = NoteViewController()
-        noteViewController.noteCoordinator = self
-        self.navigationController.pushViewController(noteViewController, animated: true)
+    func start(completion: @escaping () -> Void) {
+        self.onFinish = completion
+        let noteVC = NoteViewController()
+        let noteToEdit = note ?? CoreDataManager.shared.createNewNote()
+        
+        noteVC.viewModel = NoteViewModel(note: noteToEdit)
+        noteVC.noteCoordinator = self
+        noteVC.onSave = { [weak self] in
+            self?.onFinish?()
+        }
+        
+        navigationController.pushViewController(noteVC, animated: true)
     }
     
     func dismiss() {

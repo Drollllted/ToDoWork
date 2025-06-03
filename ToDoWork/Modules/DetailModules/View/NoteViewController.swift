@@ -7,12 +7,11 @@
 
 import UIKit
 
-final class NoteViewController: UIViewController{
-    
+final class NoteViewController: UIViewController {
     private var noteView: NoteView!
-    var note: Note?
     weak var noteCoordinator: NoteCoordinator?
     var viewModel: NoteViewModel!
+    var onSave: (() -> Void)?
     
     override func loadView() {
         noteView = NoteView()
@@ -23,46 +22,42 @@ final class NoteViewController: UIViewController{
         super.viewDidLoad()
         view.backgroundColor = .black
         setupNavBar()
-        readOnlyForAPI()
         setupBindings()
         configureUI()
     }
     
     private func setupNavBar() {
-        self.navigationItem.title = "Note"
-        navigationController?.navigationBar.titleTextAttributes = [.foregroundColor : UIColor.white]
-        navigationController?.navigationBar.prefersLargeTitles = false
-    }
-    
-    private func readOnlyForAPI() {
-        noteView.nameNoteTextField.isEnabled = !viewModel.isReadOnly
-        noteView.textViewNote.isEditable = !viewModel.isReadOnly
+        navigationItem.title = "Note"
+        navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.white]
         
-        if viewModel.isReadOnly {
-            noteView.nameNoteTextField.textColor = .lightGray
-            noteView.textViewNote.textColor = .lightGray
-            noteView.nameNoteTextField.backgroundColor = .darkGray.withAlphaComponent(0.2)
-            noteView.textViewNote.backgroundColor = .darkGray.withAlphaComponent(0.2)
-        }
+        let saveButton = UIBarButtonItem(
+            image: UIImage(systemName: "checkmark"),
+            style: .done,
+            target: self,
+            action: #selector(saveNote)
+        )
+        navigationItem.rightBarButtonItem = saveButton
     }
     
     private func setupBindings() {
         viewModel.onUpdate = { [weak self] in
-            self?.configureUI()
+            self?.noteCoordinator?.dismiss()
         }
     }
+    
     private func configureUI() {
         noteView.nameNoteTextField.text = viewModel.title
-        noteView.textViewNote.text = viewModel.textView
+        noteView.textViewNote.text = viewModel.text
         noteView.dateCreateNote.text = viewModel.date
     }
     
     @objc private func saveNote() {
-        viewModel.updateNotes(title: noteView.nameNoteTextField.text ?? "",
-                              text: noteView.textViewNote.text)
-        navigationController?.popViewController(animated: true)
+        viewModel.updateNote(
+            title: noteView.nameNoteTextField.text ?? "",
+            text: noteView.textViewNote.text
+        )
+        onSave?()
+        noteCoordinator?.dismiss()
+
     }
-    
-    
-    
 }

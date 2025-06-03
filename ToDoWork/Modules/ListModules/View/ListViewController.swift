@@ -75,45 +75,13 @@ final class ListViewController: UIViewController {
         listView.tableNoteView.addGestureRecognizer(longPressRecognizer)
     }
     
-    @objc private func createNotes() {
-        let alertController = UIAlertController(title: "Create new note", message: "What's title?", preferredStyle: .alert)
-        alertController.addTextField { tf in
-            tf.placeholder = "Title"
-        }
-        
-        alertController.addTextField { tf in
-            tf.placeholder = "Note"
-        }
-        
-        alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-        alertController.addAction(UIAlertAction(title: "Save", style: .default) { [weak self] _ in
-            guard let title = alertController.textFields?.first?.text,
-                  let description = alertController.textFields?.last?.text else { return }
-            
-            let context = CoreDataManager.shared.persistentContainer.viewContext
-            let newNote = Note(context: context)
-            newNote.id = UUID()
-            newNote.titleNotes = title
-            newNote.textNotes = description
-            newNote.dateNotes = Date()
-            newNote.completed = false
-            
-            do {
-                try CoreDataManager.shared.addOrUpdateNote(note: newNote)
+        @objc private func createNotes() {
+            let noteCoordinator = NoteCoordinator(navigationController: navigationController ?? UINavigationController(), note: nil)
+            noteCoordinator.start { [weak self] in
                 self?.viewModel.fetchNotes()
-                self?.viewModel.fetchTodos()
-                DispatchQueue.main.async { [weak self] in
-                    self?.listView.tableNoteView.reloadData()
-                }
-            } catch {
-                self?.viewModel.errors?(error.localizedDescription)
+                self?.listView.tableNoteView.reloadData()
             }
-        })
-        
-        present(alertController, animated: true)
-    }
-
-
+        }
 }
 
 extension ListViewController: UITableViewDelegate, UITableViewDataSource{
@@ -132,6 +100,7 @@ extension ListViewController: UITableViewDelegate, UITableViewDataSource{
             } else if let note = item as? Note {
                 note.completed = isCompleted
                 try? CoreDataManager.shared.addOrUpdateNote(note: note)
+                self.viewModel.fetchNotes()
             }
         }
         
@@ -144,20 +113,10 @@ extension ListViewController: UITableViewDelegate, UITableViewDataSource{
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let item = viewModel.item(at: indexPath.row)
         
-        if let note = item as? Note {
-            let noteViewModel = NoteViewModel(noteType: .coreData(note: note))
-            listCoordinatesDelegate?.goToNoteVC(with: noteViewModel)
-        } else if let todo = item as? Todo {
-            let noteViewModel = NoteViewModel(noteType: .api(todo: todo))
-            listCoordinatesDelegate?.goToNoteVC(with: noteViewModel)
-        }
     }
     
     func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
-        
-        let item = viewModel.item(at: indexPath.row)
         
         return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
             let editAction = UIAction(
@@ -186,12 +145,7 @@ extension ListViewController: UITableViewDelegate, UITableViewDataSource{
     }
     
     @objc func handleLongPress(_ gesture: UILongPressGestureRecognizer) {
-        guard gesture.state == .began else { return }
-        
-        let point = gesture.location(in: listView.tableNoteView)
-        if let indexPath = listView.tableNoteView.indexPathForRow(at: point) {
-            let item = viewModel.item(at: indexPath.row)
-        }
+
     }
 }
 
