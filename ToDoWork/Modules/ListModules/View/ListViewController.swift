@@ -36,7 +36,7 @@ final class ListViewController: UIViewController {
     }
     
     private func setupNavBar() {
-        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationController?.navigationBar.prefersLargeTitles = false
         title = "ToDoList"
         navigationController?.navigationBar.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
         
@@ -68,7 +68,7 @@ final class ListViewController: UIViewController {
         
         viewModel.errors = {[weak self] errorMessage in
             let alert = UIAlertController(title: "Warning", message: errorMessage, preferredStyle: .alert)
-            let alertAction = UIAlertAction(title: "Ok", style: .cancel)
+            _ = UIAlertAction(title: "Ok", style: .cancel)
             self?.present(alert, animated: true)
         }
     }

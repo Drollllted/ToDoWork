@@ -50,14 +50,5 @@ final class NoteViewModel {
         }
     }
     
-    func lookTodo(title: String, text: String, date: String) {
-        var titleTodes = todo?.todo
-        var textAPI = "From API(only Read)"
-        var dates = "20/05/2025"
-        
-        titleTodes = title
-        textAPI = text
-        dates = date
-        
-    }
+
 }
