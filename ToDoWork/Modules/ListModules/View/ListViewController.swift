@@ -46,8 +46,25 @@ final class ListViewController: UIViewController {
         let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(createNotes))
         navigationItem.rightBarButtonItem = addButton
         
+        blackNavBarAtScroll()
+        
     }
     
+    func blackNavBarAtScroll() {
+        if #available(iOS 13.0, *) {
+            let navBarAppearance = UINavigationBarAppearance()
+            navBarAppearance.configureWithOpaqueBackground()
+            navBarAppearance.backgroundColor = .black
+            navBarAppearance.titleTextAttributes = [.foregroundColor: UIColor.white]
+            
+            navigationController?.navigationBar.standardAppearance = navBarAppearance
+            navigationController?.navigationBar.scrollEdgeAppearance = navBarAppearance
+            navigationController?.navigationBar.compactAppearance = navBarAppearance
+            
+            navigationController?.navigationBar.tintColor = .white
+            navigationController?.navigationBar.barStyle = .black
+        }
+    }
     private func fetch() {
         viewModel.fetchTodos()
         viewModel.fetchNotes()
