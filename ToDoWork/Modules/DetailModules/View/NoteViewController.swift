@@ -42,6 +42,7 @@ final class NoteViewController: UIViewController {
         setupNavBar()
         setupBindings()
         configureUI()
+        showDownKeyboard()
     }
     
     private func setupNavBar() {
@@ -79,6 +80,16 @@ final class NoteViewController: UIViewController {
         viewModel.onUpdate = { [weak self] in
             self?.noteCoordinator?.dismiss()
         }
+    }
+    
+    private func showDownKeyboard() {
+        let gesture = UIGestureRecognizer(target: self, action: #selector(setupGesture))
+        gesture.cancelsTouchesInView = false
+        view.addGestureRecognizer(gesture)
+    }
+    
+    @objc private func setupGesture() {
+        view.endEditing(true)
     }
     
     private func configureUI() {

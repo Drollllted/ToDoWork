@@ -228,13 +228,27 @@ extension ListViewController: UITableViewDelegate, UITableViewDataSource{
                 image: UIImage(systemName: "trash"),
                 attributes: .destructive
             ) { [weak self] _ in
-                self?.viewModel.deleteItem(at: indexPath.row) { success in
-                    DispatchQueue.main.async {
-                        if success{
-                            tableView.deleteRows(at: [indexPath], with: .automatic)
+                
+                let alertController = UIAlertController(title: "Delete", message: "Are you sure?", preferredStyle: .alert)
+                
+                let deleteAction = UIAlertAction(title: "Delete", style: .destructive) { [weak self] _ in
+                    self?.viewModel.deleteItem(at: indexPath.row) { success in
+                        DispatchQueue.main.async {
+                            if success{
+                                tableView.deleteRows(at: [indexPath], with: .automatic)
+                            }
                         }
                     }
                 }
+                let cancelButton = UIAlertAction(title: "Cancel", style: .default) { _ in
+                    
+                }
+                
+                alertController.addAction(deleteAction)
+                alertController.addAction(cancelButton)
+                
+                self?.present(alertController, animated: true)
+                
             }
             return UIMenu(title: "", children: [editAction, shareAction, deleteAction])
         }
