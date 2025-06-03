@@ -164,6 +164,21 @@ extension ListViewController: UITableViewDelegate, UITableViewDataSource{
                 title: "Share",
                 image: UIImage(systemName: "square.and.arrow.up")
             ) { _ in
+//                print("Поделиться элементом: \(item)")
+//                let textToShare = "Поделиться: \()"
+//                let activityVC = UIActivityViewController(
+//                    activityItems: [textToShare],
+//                    applicationActivities: nil
+//                )
+                if let todo = item as? Todo {
+                    let textToShare = "Поделиться \(todo.todo)"
+                    let activityVC = UIActivityViewController(activityItems: [textToShare], applicationActivities: nil)
+                    self.present(activityVC, animated: true)
+                }else if let note = item as? Note {
+                    let textToShare = "Поделиться \(String(describing: note.titleNotes))"
+                    let activityVC = UIActivityViewController(activityItems: [textToShare], applicationActivities: nil)
+                    self.present(activityVC, animated: true)
+                }
                 
             }
             
