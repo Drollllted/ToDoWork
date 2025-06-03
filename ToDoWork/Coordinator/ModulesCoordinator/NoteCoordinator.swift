@@ -7,34 +7,49 @@
 
 import UIKit
 
-class NoteCoordinator: BaseCoordinator{
+class NoteCoordinator: BaseCoordinator {
     
     private let navigationController: UINavigationController
     private let note: Note?
+    private let todo: Todo?
     private var onFinish: (() -> Void)?
+    private let mode: Rework
     
-    init(navigationController: UINavigationController, note: Note?) {
+    init(navigationController: UINavigationController, note: Note?, mode: Rework = .rework) {
         self.navigationController = navigationController
         self.note = note
+        self.todo = nil
+        self.mode = mode
+    }
+    
+    init(navigationController: UINavigationController, todo: Todo) {
+        self.navigationController = navigationController
+        self.todo = todo
+        self.note = nil
+        self.mode = .viewOnly
     }
     
     func start(completion: @escaping () -> Void) {
         self.onFinish = completion
-        let noteVC = NoteViewController()
-        let noteToEdit = note ?? CoreDataManager.shared.createNewNote()
         
-        noteVC.viewModel = NoteViewModel(note: noteToEdit)
-        noteVC.noteCoordinator = self
-        noteVC.onSave = { [weak self] in
-            self?.onFinish?()
+        if let note = note {
+            let noteVC = NoteViewController(reworkEnum: mode)
+            noteVC.viewModel = NoteViewModel(note: note)
+            noteVC.noteCoordinator = self
+            noteVC.onSave = { [weak self] in
+                self?.onFinish?()
+            }
+            navigationController.pushViewController(noteVC, animated: true)
+        } else if let todo = todo {
+            let noteVC = NoteViewController(reworkEnum: mode)
+            noteVC.viewModel = NoteViewModel(todo: todo)
+            noteVC.noteCoordinator = self
+            navigationController.pushViewController(noteVC, animated: true)
         }
-        
-        navigationController.pushViewController(noteVC, animated: true)
     }
     
     func dismiss() {
         navigationController.popViewController(animated: true)
         onFinish?()
     }
-    
 }

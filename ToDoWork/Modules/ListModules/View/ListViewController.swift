@@ -17,7 +17,7 @@ final class ListViewController: UIViewController {
         listView = ListView()
         view = listView
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .black
@@ -75,13 +75,14 @@ final class ListViewController: UIViewController {
         listView.tableNoteView.addGestureRecognizer(longPressRecognizer)
     }
     
-        @objc private func createNotes() {
-            let noteCoordinator = NoteCoordinator(navigationController: navigationController ?? UINavigationController(), note: nil)
-            noteCoordinator.start { [weak self] in
-                self?.viewModel.fetchNotes()
-                self?.listView.tableNoteView.reloadData()
-            }
+    @objc private func createNotes() {
+        print("ewqw")
+        let noteCoordinator = NoteCoordinator(navigationController: navigationController ?? UINavigationController(), note: nil, mode: .rework)
+        noteCoordinator.start { [weak self] in
+            self?.viewModel.fetchNotes()
+            self?.listView.tableNoteView.reloadData()
         }
+    }
 }
 
 extension ListViewController: UITableViewDelegate, UITableViewDataSource{
@@ -114,6 +115,27 @@ extension ListViewController: UITableViewDelegate, UITableViewDataSource{
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
+        let item = viewModel.item(at: indexPath.row)
+        
+        if let todo = item as? Todo {
+            let coordinator = NoteCoordinator(
+                navigationController: navigationController ?? UINavigationController(),
+                todo: todo
+            )
+            coordinator.start { [weak self] in
+                self?.listView.tableNoteView.reloadData()
+            }
+        } else if let note = item as? Note {
+            let coordinator = NoteCoordinator(
+                navigationController: navigationController ?? UINavigationController(),
+                note: note,
+                mode: .notRework
+            )
+            coordinator.start { [weak self] in
+                self?.viewModel.fetchNotes()
+                self?.listView.tableNoteView.reloadData()
+            }
+        }
     }
     
     func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
@@ -126,7 +148,13 @@ extension ListViewController: UITableViewDelegate, UITableViewDataSource{
                 title: "Edit",
                 image: UIImage(systemName: "pencil")
             ) { _ in
-
+                if let note = item as? Note {
+                    let noteCoordinator = NoteCoordinator(navigationController: self.navigationController!, note: note, mode: .rework)
+                    noteCoordinator.start { [weak self] in
+                        self?.viewModel.fetchNotes()
+                        self?.listView.tableNoteView.reloadData()
+                    }
+                }
             }
             
             let shareAction = UIAction(
@@ -140,7 +168,7 @@ extension ListViewController: UITableViewDelegate, UITableViewDataSource{
                 title: "Delete",
                 image: UIImage(systemName: "trash"),
                 attributes: .destructive
-            ) { [weak self]_ in
+            ) { [weak self] _ in
                 self?.viewModel.deleteItem(at: indexPath.row) { success in
                     DispatchQueue.main.async {
                         if success{
@@ -154,7 +182,7 @@ extension ListViewController: UITableViewDelegate, UITableViewDataSource{
     }
     
     @objc func handleLongPress(_ gesture: UILongPressGestureRecognizer) {
-
+        print("231")
     }
+    
 }
-

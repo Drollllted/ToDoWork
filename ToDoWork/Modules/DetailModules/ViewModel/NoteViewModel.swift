@@ -8,34 +8,41 @@
 import UIKit
 
 final class NoteViewModel {
-    private let note: Note
+    private let note: Note?
+    private let todo: Todo?
     private let coreDataManager = CoreDataManager.shared
     
     var onUpdate: (() -> Void)?
     
     var title: String {
-        note.titleNotes ?? ""
+        note?.titleNotes ?? ""
     }
     
     var text: String {
-        note.textNotes ?? ""
+        note?.textNotes ?? ""
     }
     
     var date: String {
-        DateFormatterHelper.shared.formattedDate(from: note.dateNotes ?? Date())
+        DateFormatterHelper.shared.formattedDate(from: note?.dateNotes ?? Date())
     }
     
     init(note: Note) {
         self.note = note
+        self.todo = nil
+    }
+    
+    init(todo: Todo) {
+        self.todo = todo
+        self.note = nil
     }
     
     func updateNote(title: String, text: String) {
-        note.titleNotes = title
-        note.textNotes = text
-        note.dateNotes = Date()
+        note?.titleNotes = title
+        note?.textNotes = text
+        note?.dateNotes = Date()
         
         do {
-            try coreDataManager.addOrUpdateNote(note: note)
+            try coreDataManager.addOrUpdateNote(note: note!)
             coreDataManager.saveContext()
             onUpdate?()
         } catch {
