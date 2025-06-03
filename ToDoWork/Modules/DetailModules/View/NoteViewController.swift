@@ -65,14 +65,13 @@ final class NoteViewController: UIViewController {
             noteView.dateCreateNote.isEnabled = true
             
         case .notRework:
-            noteView.nameNoteTextField.isEnabled = false
-            noteView.textViewNote.isEditable = false
-            noteView.dateCreateNote.isEnabled = false
+            noteView.nameNoteTextField.isUserInteractionEnabled = false
+            noteView.textViewNote.isUserInteractionEnabled = false
             
         case .viewOnly:
-            noteView.nameNoteTextField.isEnabled = false
-            noteView.textViewNote.isEditable = false
-            noteView.dateCreateNote.isEnabled = false
+            noteView.nameNoteTextField.isUserInteractionEnabled = false
+            noteView.textViewNote.isUserInteractionEnabled = false
+            noteView.dateCreateNote.isEnabled = true
         }
     }
     
