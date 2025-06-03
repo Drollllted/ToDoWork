@@ -6,7 +6,18 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXContainerItemProxy section */
+		DD1C64672DEF690D00EEE251 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DD9166EE2DE6091400B069B7 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DD9166F52DE6091400B069B7;
+			remoteInfo = ToDoWork;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
+		DD1C64632DEF690D00EEE251 /* ToDoWorkTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ToDoWorkTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DD9166F62DE6091400B069B7 /* ToDoWork.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ToDoWork.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -21,6 +32,16 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		DD1C64522DEF680200EEE251 /* ToDoWorkTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = ToDoWorkTests;
+			sourceTree = "<group>";
+		};
+		DD1C64642DEF690D00EEE251 /* ToDoWorkTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = ToDoWorkTests;
+			sourceTree = "<group>";
+		};
 		DD9166F82DE6091400B069B7 /* ToDoWork */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
@@ -32,6 +53,13 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		DD1C64602DEF690D00EEE251 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		DD9166F32DE6091400B069B7 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -46,6 +74,8 @@
 			isa = PBXGroup;
 			children = (
 				DD9166F82DE6091400B069B7 /* ToDoWork */,
+				DD1C64522DEF680200EEE251 /* ToDoWorkTests */,
+				DD1C64642DEF690D00EEE251 /* ToDoWorkTests */,
 				DD9166F72DE6091400B069B7 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -54,6 +84,7 @@
 			isa = PBXGroup;
 			children = (
 				DD9166F62DE6091400B069B7 /* ToDoWork.app */,
+				DD1C64632DEF690D00EEE251 /* ToDoWorkTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -61,6 +92,29 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		DD1C64622DEF690D00EEE251 /* ToDoWorkTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DD1C64692DEF690D00EEE251 /* Build configuration list for PBXNativeTarget "ToDoWorkTests" */;
+			buildPhases = (
+				DD1C645F2DEF690D00EEE251 /* Sources */,
+				DD1C64602DEF690D00EEE251 /* Frameworks */,
+				DD1C64612DEF690D00EEE251 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				DD1C64682DEF690D00EEE251 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				DD1C64642DEF690D00EEE251 /* ToDoWorkTests */,
+			);
+			name = ToDoWorkTests;
+			packageProductDependencies = (
+			);
+			productName = ToDoWorkTests;
+			productReference = DD1C64632DEF690D00EEE251 /* ToDoWorkTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		DD9166F52DE6091400B069B7 /* ToDoWork */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = DD91670C2DE6091600B069B7 /* Build configuration list for PBXNativeTarget "ToDoWork" */;
@@ -93,6 +147,10 @@
 				LastSwiftUpdateCheck = 1620;
 				LastUpgradeCheck = 1620;
 				TargetAttributes = {
+					DD1C64622DEF690D00EEE251 = {
+						CreatedOnToolsVersion = 16.2;
+						TestTargetID = DD9166F52DE6091400B069B7;
+					};
 					DD9166F52DE6091400B069B7 = {
 						CreatedOnToolsVersion = 16.2;
 					};
@@ -113,11 +171,19 @@
 			projectRoot = "";
 			targets = (
 				DD9166F52DE6091400B069B7 /* ToDoWork */,
+				DD1C64622DEF690D00EEE251 /* ToDoWorkTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		DD1C64612DEF690D00EEE251 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		DD9166F42DE6091400B069B7 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -128,6 +194,13 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		DD1C645F2DEF690D00EEE251 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		DD9166F22DE6091400B069B7 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -137,7 +210,51 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		DD1C64682DEF690D00EEE251 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DD9166F52DE6091400B069B7 /* ToDoWork */;
+			targetProxy = DD1C64672DEF690D00EEE251 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		DD1C646A2DEF690D00EEE251 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = M486R3V7D5;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.Drolllted.ToDoWorkTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ToDoWork.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ToDoWork";
+			};
+			name = Debug;
+		};
+		DD1C646B2DEF690D00EEE251 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = M486R3V7D5;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.Drolllted.ToDoWorkTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ToDoWork.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ToDoWork";
+			};
+			name = Release;
+		};
 		DD91670D2DE6091600B069B7 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -314,6 +431,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		DD1C64692DEF690D00EEE251 /* Build configuration list for PBXNativeTarget "ToDoWorkTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DD1C646A2DEF690D00EEE251 /* Debug */,
+				DD1C646B2DEF690D00EEE251 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		DD9166F12DE6091400B069B7 /* Build configuration list for PBXProject "ToDoWork" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
