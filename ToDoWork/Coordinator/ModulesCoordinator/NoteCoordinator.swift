@@ -31,7 +31,6 @@ class NoteCoordinator: BaseCoordinator {
     
     func start(completion: @escaping () -> Void) {
         self.onFinish = completion
-        
         if let todo = todo {
             let noteVC = NoteViewController(reworkEnum: mode)
             noteVC.viewModel = NoteViewModel(todo: todo)

@@ -82,9 +82,16 @@ final class NoteViewController: UIViewController {
     }
     
     private func configureUI() {
-        noteView.nameNoteTextField.text = viewModel.title
-        noteView.textViewNote.text = viewModel.text
-        noteView.dateCreateNote.text = viewModel.date
+        
+        if let todo = viewModel.todo {
+            noteView.nameNoteTextField.text = viewModel.todo?.todo
+            noteView.textViewNote.text = "From API (For Read)"
+            noteView.dateCreateNote.text = "20/05/2025"
+        }else if let note = viewModel.note {
+            noteView.nameNoteTextField.text = viewModel.title
+            noteView.textViewNote.text = viewModel.text
+            noteView.dateCreateNote.text = viewModel.date
+        }
     }
     
     @objc private func saveNote() {

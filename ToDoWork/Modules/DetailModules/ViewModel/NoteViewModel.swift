@@ -8,8 +8,8 @@
 import UIKit
 
 final class NoteViewModel {
-    private let note: Note?
-    private let todo: Todo?
+    let note: Note?
+    var todo: Todo?
     private let coreDataManager = CoreDataManager.shared
     
     var onUpdate: (() -> Void)?
@@ -48,5 +48,16 @@ final class NoteViewModel {
         } catch {
             print("Error saving note: \(error.localizedDescription)")
         }
+    }
+    
+    func lookTodo(title: String, text: String, date: String) {
+        var titleTodes = todo?.todo
+        var textAPI = "From API(only Read)"
+        var dates = "20/05/2025"
+        
+        titleTodes = title
+        textAPI = text
+        dates = date
+        
     }
 }
