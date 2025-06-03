@@ -157,8 +157,6 @@ extension ListViewController: UITableViewDelegate, UITableViewDataSource{
     
     func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
         
-        let item = viewModel.item(at: indexPath.row)
-        
         return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
             let editAction = UIAction(
                 title: "Edit",
@@ -186,12 +184,12 @@ extension ListViewController: UITableViewDelegate, UITableViewDataSource{
     }
     
     @objc func handleLongPress(_ gesture: UILongPressGestureRecognizer) {
-        guard gesture.state == .began else { return }
-        
-        let point = gesture.location(in: listView.tableNoteView)
-        if let indexPath = listView.tableNoteView.indexPathForRow(at: point) {
-            let item = viewModel.item(at: indexPath.row)
-        }
+//        guard gesture.state == .began else { return }
+//        
+//        let point = gesture.location(in: listView.tableNoteView)
+//        if let indexPath = listView.tableNoteView.indexPathForRow(at: point) {
+//            let item = viewModel.item(at: indexPath.row)
+//        }
     }
 }
 
