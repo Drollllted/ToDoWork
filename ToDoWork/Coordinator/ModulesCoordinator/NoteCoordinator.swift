@@ -33,7 +33,8 @@ class NoteCoordinator: BaseCoordinator{
     }
     
     func dismiss() {
-        navigationController.dismiss(animated: true)
+        navigationController.popViewController(animated: true)
+        onFinish?()
     }
     
 }
