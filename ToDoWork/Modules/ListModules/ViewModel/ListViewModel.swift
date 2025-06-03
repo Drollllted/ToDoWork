@@ -76,28 +76,32 @@ final class ListViewModel {
          onDataUpdates?()
      }
      
-     func deleteItem(at index: Int) {
-         if index < todos.count {
-             todos.remove(at: index)
-         } else {
-             let noteIndex = index - todos.count
-             let note = notes[noteIndex]
-             if let id = note.id {
-                 do {
-                     try coreDataManager.deleteNotes(id: id)
-                     notes.remove(at: noteIndex)
-                 } catch {
-                     errors?(error.localizedDescription)
-                 }
-             }
-         }
-         onDataUpdates?()
-     }
+    func deleteItem(at index: Int, completion: @escaping (Bool) -> Void) {
+        if index < todos.count {
+            todos.remove(at: index)
+            completion(true)
+        } else {
+            let noteIndex = index - todos.count
+            let note = notes[noteIndex]
+            if let id = note.id {
+                do {
+                    try coreDataManager.deleteNotes(id: id)
+                    notes.remove(at: noteIndex)
+                    completion(true)
+                } catch {
+                    errors?(error.localizedDescription)
+                    completion(false)
+                }
+            } else {
+                completion(false)
+            }
+        }
+    }
     
     //MARK: Count All
     
     func addAllItems() -> Int {
-        return todos.count + notes.count
+        return notes.count + todos.count
     }
     
 }

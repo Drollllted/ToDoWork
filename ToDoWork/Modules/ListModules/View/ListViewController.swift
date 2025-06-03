@@ -141,7 +141,13 @@ extension ListViewController: UITableViewDelegate, UITableViewDataSource{
                 image: UIImage(systemName: "trash"),
                 attributes: .destructive
             ) { [weak self]_ in
-                self?.viewModel.deleteItem(at: indexPath.row)
+                self?.viewModel.deleteItem(at: indexPath.row) { success in
+                    DispatchQueue.main.async {
+                        if success{
+                            tableView.deleteRows(at: [indexPath], with: .automatic)
+                        }
+                    }
+                }
             }
             return UIMenu(title: "", children: [editAction, shareAction, deleteAction])
         }

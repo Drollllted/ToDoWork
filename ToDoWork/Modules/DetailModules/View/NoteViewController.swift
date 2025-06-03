@@ -8,6 +8,7 @@
 import UIKit
 
 final class NoteViewController: UIViewController {
+    
     private var noteView: NoteView!
     weak var noteCoordinator: NoteCoordinator?
     var viewModel: NoteViewModel!
