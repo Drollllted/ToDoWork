@@ -20,11 +20,8 @@ class ListCoordinator: BaseCoordinator{
         self.navigationController.pushViewController(listVC, animated: true)
     }
     
-    func goToNoteVC(with viewModel: NoteViewModel) {
-        let noteVC = NoteViewController()
-        noteVC.viewModel = viewModel
-         
-        let noteCoordinator = NoteCoordinator(navigationController: navigationController)
+    func goToNoteVC(with note: Note?) {
+        let noteCoordinator = NoteCoordinator(navigationController: navigationController, note: note)
         add(coordinator: noteCoordinator)
         noteCoordinator.start()
     }
