@@ -158,6 +158,9 @@ extension ListViewController: UITableViewDelegate, UITableViewDataSource{
     func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
         
         return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
+            
+            let item = self.viewModel.item(at: indexPath.row)
+            
             let editAction = UIAction(
                 title: "Edit",
                 image: UIImage(systemName: "pencil")
@@ -169,15 +172,15 @@ extension ListViewController: UITableViewDelegate, UITableViewDataSource{
                 title: "Share",
                 image: UIImage(systemName: "square.and.arrow.up")
             ) { _ in
-
+                
             }
             
             let deleteAction = UIAction(
                 title: "Delete",
                 image: UIImage(systemName: "trash"),
                 attributes: .destructive
-            ) { _ in
-
+            ) { [weak self]_ in
+                self?.viewModel.deleteItem(at: indexPath.row)
             }
             return UIMenu(title: "", children: [editAction, shareAction, deleteAction])
         }
