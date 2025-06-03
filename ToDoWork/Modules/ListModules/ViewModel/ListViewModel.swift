@@ -123,27 +123,29 @@ final class ListViewModel {
         
         return getItems
     }
-    
-    func filterContentForSearchText(_ searchText: String) {
-        if searchText.isEmpty {
-            isSearching = false
-            onDataUpdates?()
-            return
-        }
-        
-        isSearching = true
-        let allItems = getAllItems()
-        _ = allItems.filter { item in
-            if let todo = item as? Todo {
-                return todo.todo.lowercased().contains(searchText.lowercased())
-            } else if let note = item as? Note {
-                return note.titleNotes?.lowercased().contains(searchText.lowercased()) ?? false
+        func filterContentForSearchText(_ searchText: String) {
+            let searchText = searchText.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+            
+            if searchText.isEmpty {
+                isSearching = false
+                onDataUpdates?()
+                return
             }
-            return false
+            
+            isSearching = true
+            let allItems = getAllItems()
+            
+            filteredItems = allItems.filter { item in
+                if let todo = item as? Todo {
+                    return todo.todo.lowercased().contains(searchText)
+                } else if let note = item as? Note {
+                    let titleContains = note.titleNotes?.lowercased().contains(searchText) ?? false
+                    let textContains = note.textNotes?.lowercased().contains(searchText) ?? false
+                    return titleContains || textContains
+                }
+                return false
+            }
+            
+            onDataUpdates?()
         }
-        
-        onDataUpdates?()
-        
-    }
-    
 }
